@@ -7,6 +7,19 @@ export function saveTodos(todos) {
   localStorage.setItem('todos', JSON.stringify(todos));
 }
 
+export function saveEdit(id, inputElement) {
+  const newTitle = inputElement.value.trim();
+  const todos = loadTodos();
+  const todo = todos.find(t => t.id === id);
+  if (!todo) return;
+
+  if (newTitle) {
+    todo.title = newTitle;
+    saveTodos(todos);
+  }
+  renderTodos();
+}
+
 export function enterEditMode(id, spanElement) {
   const todos = loadTodos();
   const todo = todos.find(t => t.id === id);
@@ -19,6 +32,10 @@ export function enterEditMode(id, spanElement) {
 
   spanElement.parentNode.replaceChild(input, spanElement);
   input.focus();
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveEdit(id, input);
+  });
 }
 
 export function toggleTodo(id) {

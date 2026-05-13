@@ -29,8 +29,8 @@
 - [x] 4.2 Implement: Add `toggleTodo(id)` and bind to checkbox `change` event in `renderTodos()`
 - [x] 4.3 Test: Clicking a todo title replaces it with an `<input>` pre-filled with the current title (edit mode)
 - [x] 4.4 Implement: Add `enterEditMode(id, element)` function that swaps the title span for an editable input
-- [ ] 4.5 Test: Pressing Enter while editing saves the new title to LocalStorage and reverts to text display
-- [ ] 4.6 Implement: Add `saveEdit(id, newTitle)` bound to the inline input's `keydown` (Enter) event
+- [x] 4.5 Test: Pressing Enter while editing saves the new title to LocalStorage and reverts to text display
+- [x] 4.6 Implement: Add `saveEdit(id, newTitle)` bound to the inline input's `keydown` (Enter) event
 - [ ] 4.7 Test: Moving focus away (blur) while editing saves the new title
 - [ ] 4.8 Implement: Also bind `saveEdit` to the inline input's `blur` event
 - [ ] 4.9 Test: Saving an empty title restores the original title (empty title not persisted)
