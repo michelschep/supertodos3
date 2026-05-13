@@ -162,15 +162,15 @@ function Test-BrowserStartup {
     }
 
     $port = 13579
-    Write-Host "  ⚙️  Starting serve on :$port — opening browser (3s)..." -ForegroundColor Gray
+    Write-Host "  ⚙️  Starting serve on :$port — opening browser (5s)..." -ForegroundColor Gray
 
     # Do NOT redirect stdout/stderr — unread buffers cause the server to hang
-    $psi = [System.Diagnostics.ProcessStartInfo]::new("cmd.exe", "/c npx serve . --listen $port --no-clipboard")
+    $psi = [System.Diagnostics.ProcessStartInfo]::new("cmd.exe", "/c npx serve -l $port --no-clipboard")
     $psi.UseShellExecute = $false
     $psi.CreateNoWindow  = $true
     $psi.WorkingDirectory = $pwDir
     $serverProc = [System.Diagnostics.Process]::Start($psi)
-    Start-Sleep -Seconds 3
+    Start-Sleep -Seconds 5
 
     $script = @"
 import { chromium } from 'playwright';
@@ -179,6 +179,7 @@ const page = await browser.newPage();
 const errors = [];
 page.on('console', msg => { if (msg.type() === 'error') errors.push('[console.error] ' + msg.text()); });
 page.on('pageerror', err => errors.push('[uncaught] ' + err.message));
+page.on('response', resp => { if (resp.status() >= 400) errors.push('[' + resp.status() + '] ' + resp.url()); });
 try {
   await page.goto('http://localhost:$port', { waitUntil: 'domcontentloaded', timeout: 10000 });
   await page.waitForTimeout(2000);
@@ -187,19 +188,45 @@ await browser.close();
 if (errors.length > 0) { process.stderr.write(errors.join('\n') + '\n'); process.exit(1); }
 "@
 
-    Push-Location $pwDir
-    $result = $script | node --input-type=module 2>&1
-    $exitCode = $LASTEXITCODE
-    Pop-Location
+    # Write temp script alongside node_modules so Node.js resolves 'playwright' correctly
+    $tmpScript = Join-Path $pwDir "._ralph_browser_check.mjs"
+    $script | Set-Content $tmpScript -Encoding UTF8
 
-    try { $serverProc.Kill($true) } catch { try { $serverProc.Kill() } catch {} }
+    $nodePsi = [System.Diagnostics.ProcessStartInfo]::new("node", "`"$tmpScript`"")
+    $nodePsi.UseShellExecute        = $false
+    $nodePsi.CreateNoWindow         = $true
+    $nodePsi.RedirectStandardOutput = $true
+    $nodePsi.RedirectStandardError  = $true
+    $nodePsi.WorkingDirectory       = $pwDir
+    Push-Location $pwDir
+    $nodeProc = [System.Diagnostics.Process]::Start($nodePsi)
+
+    $stdoutTask = $nodeProc.StandardOutput.ReadToEndAsync()
+    $stderrTask = $nodeProc.StandardError.ReadToEndAsync()
+
+    $exited = $nodeProc.WaitForExit(20000)
+    if (-not $exited) {
+        try { $nodeProc.Kill($true) } catch { try { $nodeProc.Kill() } catch {} }
+    }
+
+    $null = $stdoutTask.Wait(2000)
+    $gotStderr = $stderrTask.Wait(2000)
+    $stderr    = if ($gotStderr) { $stderrTask.Result } else { "" }
+    $exitCode  = if ($exited) { $nodeProc.ExitCode } else { -1 }
+
+    Pop-Location
+    Remove-Item $tmpScript -ErrorAction SilentlyContinue
+    # Kill entire server process tree (cmd → npx → serve)
+    $srvPid = $serverProc.Id
+    & taskkill /F /T /PID $srvPid 2>$null | Out-Null
+
+    if (-not $exited) {
+        return @{ Skipped = $false; Success = $false; ErrorLines = "Browser check timed out (20s)" }
+    }
 
     if ($exitCode -ne 0) {
-        return @{
-            Skipped    = $false
-            Success    = $false
-            ErrorLines = ($result | Where-Object { $_ } | ForEach-Object { $_.ToString() }) -join "`n"
-        }
+        $errorLines = ($stderr -split "`n" | Where-Object { $_.Trim() }) -join "`n"
+        return @{ Skipped = $false; Success = $false; ErrorLines = $errorLines }
     }
     return @{ Skipped = $false; Success = $true }
 }

@@ -12,3 +12,7 @@
 | TodoList | Concept | The ordered collection of all Todos persisted for the current user. | todo-crud-neo-brutalism |
 | EmptyState | Concept | The UI state shown when the TodoList contains no items. | todo-crud-neo-brutalism |
 | NeoBrutalism | Concept | The visual design language used across the app: thick borders, offset drop shadows, high-contrast colours, bold typography. | todo-crud-neo-brutalism |
+| StatusBox | Concept | A dedicated UI element that displays error messages to the user; hidden by default, shown when validation fails. | toon-errors-status-box |
+| ShowError | Command | Triggers the StatusBox to become visible with a given error message text. | toon-errors-status-box |
+| ClearError | Command | Hides the StatusBox and clears its message text. | toon-errors-status-box |
+| InputValidation | Concept | The process of checking user input before processing; currently verifies that a TodoTitle is non-empty. | toon-errors-status-box |

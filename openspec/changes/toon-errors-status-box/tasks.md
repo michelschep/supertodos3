@@ -10,10 +10,10 @@
 
 ## 3. JS — `showError` en `clearError` functies
 
-- [ ] 3.1 Test: `showError("Voer een titel in")` voegt klasse `status-box--visible` toe en zet de tekst
-- [ ] 3.2 Implement: exporteer functie `showError(message)` in `app.js` die de status box toont met de gegeven tekst
-- [ ] 3.3 Test: `clearError()` verwijdert klasse `status-box--visible` en maakt de tekst leeg
-- [ ] 3.4 Implement: exporteer functie `clearError()` in `app.js` die de status box verbergt en leeg maakt
+- [x] 3.1 Test: `showError("Voer een titel in")` voegt klasse `status-box--visible` toe en zet de tekst
+- [x] 3.2 Implement: exporteer functie `showError(message)` in `app.js` die de status box toont met de gegeven tekst
+- [x] 3.3 Test: `clearError()` verwijdert klasse `status-box--visible` en maakt de tekst leeg
+- [x] 3.4 Implement: exporteer functie `clearError()` in `app.js` die de status box verbergt en leeg maakt
 
 ## 4. JS — Validatie integratie in submit-handler
 

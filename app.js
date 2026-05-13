@@ -1,3 +1,17 @@
+export function showError(message) {
+  const box = document.getElementById('status-box');
+  if (!box) return;
+  box.textContent = message;
+  box.classList.add('status-box--visible');
+}
+
+export function clearError() {
+  const box = document.getElementById('status-box');
+  if (!box) return;
+  box.classList.remove('status-box--visible');
+  box.textContent = '';
+}
+
 export function loadTodos() {
   const raw = localStorage.getItem('todos');
   return raw ? JSON.parse(raw) : [];
