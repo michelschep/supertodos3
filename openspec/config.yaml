@@ -1,0 +1,50 @@
+# openspec/config.yaml — p5.js template
+# Copy this file to openspec/config.yaml when starting a p5.js project
+
+context: |
+  Tech stack: JavaScript, p5.js, served via HTTP (npx serve .)
+  Never use file:// — fetch() will fail
+  Never use p5.js reserved names as variables: width, height, color, fill, stroke,
+    random, map, text, key, image, etc.
+  Testing: Jest for pure logic functions (no p5 dependency), visual verification in browser
+  Serve via: npx serve . (never open index.html directly)
+
+rules:
+  proposal:
+    - State user value using Connextra: "As a <role>, I want <feature>, so that <benefit>"
+    - Keep scope narrow — one logical unit of work per change, split if in doubt
+
+  specs:
+    - Use Given/When/Then format for every scenario
+    - Every requirement must have at least one concrete scenario
+    - Delta sections must be one of: ADDED / MODIFIED / REMOVED
+
+  design:
+    - Separate pure logic (testable with Jest) from p5.js drawing code (visual only)
+    - State explicitly which functions are pure (no p5 calls) and which are draw-cycle functions
+    - Never call p5 functions inside pure logic functions
+
+  tasks:
+    - Group tasks by spec domain — one H2 section per specs/<domain>/spec.md file
+    - Within each domain section, produce exactly one Test:/Implement: pair per requirement,
+      strictly interleaved — never list all tests first.
+      For purely visual requirements (no testable logic): use Implement: + a Visual: verification step.
+    - Format each domain section exactly as:
+
+        ## <Domain> (specs/<domain>/spec.md)
+        - [ ] Test: Write failing Jest test — <requirement name>
+        - [ ] Implement: <requirement name>
+        - [ ] Test: Write failing Jest test — <next requirement name>
+        - [ ] Implement: <next requirement name>
+
+      For visual-only requirements:
+        - [ ] Implement: <drawing/styling requirement>
+        - [ ] Visual: Verify in browser — <what to look for>
+
+    - NEVER list all tests first and then all implementations — strictly interleave per requirement
+    - NEVER produce a naked Implement: without a preceding Test: (unless it is a purely visual task)
+    - After all domain sections, add one final verification section:
+
+        ## Verification
+        - [ ] Test: Run Jest — all tests green
+        - [ ] Visual: Open via npx serve . and verify full sketch
