@@ -91,6 +91,32 @@ describe('todo-update: pressing Enter saves the new title', () => {
   });
 });
 
+describe('todo-update: empty title on save restores original', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<ul id="todo-list"></ul>';
+    localStorage.clear();
+  });
+
+  it('saving an empty title restores the original title and does not persist the empty value', () => {
+    saveTodos([{ id: 'abc', title: 'Buy milk', completed: false }]);
+    renderTodos();
+
+    const span = document.querySelector('#todo-list .todo-title');
+    span.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const input = document.querySelector('#todo-list .edit-input');
+    input.value = '   ';
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    const todos = loadTodos();
+    expect(todos[0].title).toBe('Buy milk');
+
+    const titleSpan = document.querySelector('#todo-list .todo-title');
+    expect(titleSpan).not.toBeNull();
+    expect(titleSpan.textContent).toBe('Buy milk');
+  });
+});
+
 describe('todo-update: blur saves the new title', () => {
   beforeEach(() => {
     document.body.innerHTML = '<ul id="todo-list"></ul>';

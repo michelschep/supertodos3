@@ -33,8 +33,8 @@
 - [x] 4.6 Implement: Add `saveEdit(id, newTitle)` bound to the inline input's `keydown` (Enter) event
 - [x] 4.7 Test: Moving focus away (blur) while editing saves the new title
 - [x] 4.8 Implement: Also bind `saveEdit` to the inline input's `blur` event
-- [ ] 4.9 Test: Saving an empty title restores the original title (empty title not persisted)
-- [ ] 4.10 Implement: Guard inside `saveEdit` — if trimmed value is empty, restore original
+- [x] 4.9 Test: Saving an empty title restores the original title (empty title not persisted)
+- [x] 4.10 Implement: Guard inside `saveEdit` — if trimmed value is empty, restore original (guard already in place from task 4.6)
 
 ## 5. Delete Todo (todo-delete)
 
