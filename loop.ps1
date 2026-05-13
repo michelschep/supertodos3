@@ -42,7 +42,7 @@ function Show-SpecProgress($tasksFile) {
             if ($total -gt 0) {
                 $pct = [int](($done / $total) * 100)
                 $bar = "#" * [int]($pct / 10) + "-" * (10 - [int]($pct / 10))
-                Write-Host "  [$bar] $done/$total  $currentSpec" -ForegroundColor Cyan
+                Write-Host "  [$bar] $done/$total  $currentSpec" -ForegroundColor White
             }
             $currentSpec = $Matches[1]; $done = 0; $total = 0
         }
@@ -52,7 +52,7 @@ function Show-SpecProgress($tasksFile) {
     if ($total -gt 0) {
         $pct = [int](($done / $total) * 100)
         $bar = "#" * [int]($pct / 10) + "-" * (10 - [int]($pct / 10))
-        Write-Host "  [$bar] $done/$total  $currentSpec" -ForegroundColor Cyan
+        Write-Host "  [$bar] $done/$total  $currentSpec" -ForegroundColor White
     }
 }
 
@@ -79,13 +79,13 @@ function Invoke-UnitTests {
     if (-not $sln) { return @{ Skipped = $true; Reason = "no .sln found" } }
 
     $filter = "Category=Unit"
-    Write-Host "  ⚙️  dotnet test --filter '$filter'" -ForegroundColor DarkGray
+    Write-Host "  ⚙️  dotnet test --filter '$filter'" -ForegroundColor Gray
     $output = & dotnet test $sln.FullName --filter $filter 2>&1
     $exitCode = $LASTEXITCODE
 
     if ($output -match "No test matches") {
         $filter = "Category!=E2E"
-        Write-Host "  ⚙️  No 'Category=Unit' tests — retrying with --filter '$filter'" -ForegroundColor DarkGray
+        Write-Host "  ⚙️  No 'Category=Unit' tests — retrying with --filter '$filter'" -ForegroundColor Gray
         $output = & dotnet test $sln.FullName --filter $filter 2>&1
         $exitCode = $LASTEXITCODE
     }
@@ -106,7 +106,8 @@ function Invoke-JsTests {
 
     $anyFound = $false
     $allPassed = $true
-    $failures = [System.Collections.Generic.List[string]]::new()
+    $summaries = [System.Collections.Generic.List[string]]::new()
+    $failures  = [System.Collections.Generic.List[string]]::new()
 
     foreach ($pkg in $pkgFiles) {
         $content = Get-Content $pkg.FullName -Raw | ConvertFrom-Json -ErrorAction SilentlyContinue
@@ -115,13 +116,22 @@ function Invoke-JsTests {
         if (-not $testScript) { continue }
         $anyFound = $true
         $dir = Split-Path $pkg.FullName
-        Write-Host "  ⚙️  npm test in $dir" -ForegroundColor DarkGray
+        Write-Host "  ⚙️  npm test in $dir" -ForegroundColor Gray
         Push-Location $dir
         $env:CI = "true"
         $output = & npm test 2>&1
         $exitCode = $LASTEXITCODE
         Remove-Item Env:\CI -ErrorAction SilentlyContinue
         Pop-Location
+
+        # Extract test count — strip ANSI codes first, then find summary line
+        $cleanOutput = $output | ForEach-Object { $_ -replace '\x1b\[[0-9;]*[mGKHFABCDJSu]', '' }
+        $countLine = $cleanOutput | Where-Object { $_ -match 'Tests\s+\d+\s+passed' } | Select-Object -Last 1
+        if (-not $countLine) {
+            $countLine = ($cleanOutput | Where-Object { $_.Trim() } | Select-Object -Last 3) -join " | "
+        }
+        $summaries.Add($countLine.Trim())
+
         if ($exitCode -ne 0) {
             $allPassed = $false
             $failures.Add("npm test in $dir (exit $exitCode):`n$(($output | Select-Object -Last 10) -join "`n")")
@@ -130,9 +140,10 @@ function Invoke-JsTests {
 
     if (-not $anyFound) { return @{ Skipped = $true; Reason = "no package.json with test script" } }
     return @{
-        Skipped  = $false
-        Success  = $allPassed
-        Failures = $failures -join "`n`n"
+        Skipped   = $false
+        Success   = $allPassed
+        Summary   = $summaries -join " | "
+        Failures  = $failures -join "`n`n"
     }
 }
 
@@ -149,7 +160,7 @@ function Test-AppStartup {
     }
     if (-not $proj) { return @{ Skipped = $true; Reason = "no startable project found" } }
 
-    Write-Host "  ⚙️  Starting $($proj.Name) — 15s timeout..." -ForegroundColor DarkGray
+    Write-Host "  ⚙️  Starting $($proj.Name) — 15s timeout..." -ForegroundColor Gray
 
     $psi = [System.Diagnostics.ProcessStartInfo]::new("dotnet", "run --project `"$($proj.FullName)`"")
     $psi.RedirectStandardOutput = $true
@@ -207,11 +218,11 @@ function Test-AppStartup {
 $branch = git branch --show-current 2>$null
 $i = 0
 
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "🐣 Ralph Wiggum Loop" -ForegroundColor Cyan
-Write-Host "   Branch: $branch" -ForegroundColor Cyan
-if ($MaxIterations -gt 0) { Write-Host "   Max: $MaxIterations iterations" -ForegroundColor Cyan }
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor White
+Write-Host "🐣 Ralph Wiggum Loop" -ForegroundColor White
+Write-Host "   Branch: $branch" -ForegroundColor White
+if ($MaxIterations -gt 0) { Write-Host "   Max: $MaxIterations iterations" -ForegroundColor White }
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor White
 
 if (-not (Test-Path "openspec/changes")) {
     Write-Host "`n⚠️  No openspec folder found. Follow Step 1 in README.md first." -ForegroundColor Yellow
@@ -232,9 +243,9 @@ while ($true) {
 
     $remaining = Get-PendingCount
     Write-Host "`n══════════ LOOP $($i+1)  ($remaining tasks remaining) ══════════" -ForegroundColor Green
-    Write-Host "📊 Progress:" -ForegroundColor Cyan
+    Write-Host "📊 Progress:" -ForegroundColor White
     Show-SpecProgress $next.File
-    Write-Host "📋 Next task:" -ForegroundColor Cyan
+    Write-Host "📋 Next task:" -ForegroundColor White
     Write-Host "   $($next.Task)" -ForegroundColor White
     Write-Host ""
 
@@ -252,16 +263,16 @@ while ($true) {
 
         copilot --experimental --yolo --agent ralph --prompt $prompt
 
-        Write-Host "`n🔍 Post-implementation checks (attempt $($attempt + 1)/$MaxRetries):" -ForegroundColor Cyan
+        Write-Host "`n🔍 Post-implementation checks (attempt $($attempt + 1)/$MaxRetries):" -ForegroundColor White
         $failureDetails = ""
         $checksOk = $true
 
         $testResult = Invoke-UnitTests
         if ($testResult.Skipped) {
-            Write-Host "  ⏭️  .NET tests : skipped ($($testResult.Reason))" -ForegroundColor DarkGray
+            Write-Host "  ⏭️  .NET tests : skipped ($($testResult.Reason))" -ForegroundColor Gray
         } elseif ($testResult.Success) {
             Write-Host "  ✅ .NET tests : PASSED" -ForegroundColor Green
-            Write-Host "     $($testResult.Summary)" -ForegroundColor DarkGray
+            Write-Host "     $($testResult.Summary)" -ForegroundColor Gray
         } else {
             Write-Host "  ❌ .NET tests : FAILED" -ForegroundColor Red
             Write-Host "     $($testResult.Summary)" -ForegroundColor Yellow
@@ -271,11 +282,11 @@ while ($true) {
 
         $jsResult = Invoke-JsTests
         if ($jsResult.Skipped) {
-            Write-Host "  ⏭️  JS tests   : skipped ($($jsResult.Reason))" -ForegroundColor DarkGray
+            Write-Host "  ⏭️  JS tests   : skipped ($($jsResult.Reason))" -ForegroundColor Gray
         } elseif ($jsResult.Success) {
-            Write-Host "  ✅ JS tests   : PASSED" -ForegroundColor Green
+            Write-Host "  ✅ JS tests   : PASSED  — $($jsResult.Summary)" -ForegroundColor Green
         } else {
-            Write-Host "  ❌ JS tests   : FAILED" -ForegroundColor Red
+            Write-Host "  ❌ JS tests   : FAILED  — $($jsResult.Summary)" -ForegroundColor Red
             Write-Host "     $($jsResult.Failures)" -ForegroundColor Yellow
             $checksOk = $false
             $failureDetails += "JS tests FAILED:`n$($jsResult.Failures)`n`n"
@@ -283,7 +294,7 @@ while ($true) {
 
         $startupResult = Test-AppStartup
         if ($startupResult.Skipped) {
-            Write-Host "  ⏭️  App startup: skipped ($($startupResult.Reason))" -ForegroundColor DarkGray
+            Write-Host "  ⏭️  App startup: skipped ($($startupResult.Reason))" -ForegroundColor Gray
         } elseif ($startupResult.Success) {
             Write-Host "  ✅ App startup: OK  ($($startupResult.Project))" -ForegroundColor Green
         } else {
@@ -300,7 +311,7 @@ while ($true) {
         Write-Host "`n💥 Still failing after $MaxRetries attempt(s). Pushing and continuing." -ForegroundColor Red
     }
 
-    Write-Host "`n📤 Pushing..." -ForegroundColor Cyan
+    Write-Host "`n📤 Pushing..." -ForegroundColor White
     git push origin $branch 2>$null
     if ($LASTEXITCODE -ne 0) { git push -u origin $branch }
 
@@ -311,4 +322,4 @@ while ($true) {
     }
 }
 
-Write-Host "`n✅ Ralph loop finished after $i iteration(s)." -ForegroundColor Cyan
+Write-Host "`n✅ Ralph loop finished after $i iteration(s)." -ForegroundColor White
