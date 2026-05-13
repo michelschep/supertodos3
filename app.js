@@ -33,9 +33,16 @@ export function enterEditMode(id, spanElement) {
   spanElement.parentNode.replaceChild(input, spanElement);
   input.focus();
 
+  const onBlur = () => saveEdit(id, input);
+
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') saveEdit(id, input);
+    if (e.key === 'Enter') {
+      input.removeEventListener('blur', onBlur);
+      saveEdit(id, input);
+    }
   });
+
+  input.addEventListener('blur', onBlur);
 }
 
 export function toggleTodo(id) {

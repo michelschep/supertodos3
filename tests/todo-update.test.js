@@ -90,3 +90,32 @@ describe('todo-update: pressing Enter saves the new title', () => {
     expect(editInput).toBeNull();
   });
 });
+
+describe('todo-update: blur saves the new title', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<ul id="todo-list"></ul>';
+    localStorage.clear();
+  });
+
+  it('moving focus away (blur) saves the new title to LocalStorage and reverts to text display', () => {
+    saveTodos([{ id: 'abc', title: 'Buy milk', completed: false }]);
+    renderTodos();
+
+    const span = document.querySelector('#todo-list .todo-title');
+    span.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const input = document.querySelector('#todo-list .edit-input');
+    input.value = 'Buy oat milk';
+    input.dispatchEvent(new FocusEvent('blur', { bubbles: true }));
+
+    const todos = loadTodos();
+    expect(todos[0].title).toBe('Buy oat milk');
+
+    const titleSpan = document.querySelector('#todo-list .todo-title');
+    expect(titleSpan).not.toBeNull();
+    expect(titleSpan.textContent).toBe('Buy oat milk');
+
+    const editInput = document.querySelector('#todo-list .edit-input');
+    expect(editInput).toBeNull();
+  });
+});

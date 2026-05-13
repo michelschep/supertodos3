@@ -31,8 +31,8 @@
 - [x] 4.4 Implement: Add `enterEditMode(id, element)` function that swaps the title span for an editable input
 - [x] 4.5 Test: Pressing Enter while editing saves the new title to LocalStorage and reverts to text display
 - [x] 4.6 Implement: Add `saveEdit(id, newTitle)` bound to the inline input's `keydown` (Enter) event
-- [ ] 4.7 Test: Moving focus away (blur) while editing saves the new title
-- [ ] 4.8 Implement: Also bind `saveEdit` to the inline input's `blur` event
+- [x] 4.7 Test: Moving focus away (blur) while editing saves the new title
+- [x] 4.8 Implement: Also bind `saveEdit` to the inline input's `blur` event
 - [ ] 4.9 Test: Saving an empty title restores the original title (empty title not persisted)
 - [ ] 4.10 Implement: Guard inside `saveEdit` — if trimmed value is empty, restore original
 
