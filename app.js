@@ -7,6 +7,20 @@ export function saveTodos(todos) {
   localStorage.setItem('todos', JSON.stringify(todos));
 }
 
+export function enterEditMode(id, spanElement) {
+  const todos = loadTodos();
+  const todo = todos.find(t => t.id === id);
+  if (!todo) return;
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'edit-input';
+  input.value = todo.title;
+
+  spanElement.parentNode.replaceChild(input, spanElement);
+  input.focus();
+}
+
 export function toggleTodo(id) {
   const todos = loadTodos();
   const todo = todos.find(t => t.id === id);
@@ -70,6 +84,7 @@ export function renderTodos() {
     const span = document.createElement('span');
     span.className = todo.completed ? 'todo-title completed' : 'todo-title';
     span.textContent = todo.title;
+    span.addEventListener('click', () => enterEditMode(todo.id, span));
 
     li.appendChild(checkbox);
     li.appendChild(span);

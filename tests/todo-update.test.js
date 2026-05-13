@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { loadTodos, saveTodos, renderTodos } from '../app.js';
+import { loadTodos, saveTodos, renderTodos, enterEditMode } from '../app.js';
 
 describe('todo-update: checkbox toggles completed state', () => {
   beforeEach(() => {
@@ -36,5 +36,28 @@ describe('todo-update: checkbox toggles completed state', () => {
 
     const span = document.querySelector('#todo-list .todo-title');
     expect(span.classList.contains('completed')).toBe(false);
+  });
+});
+
+describe('todo-update: click title enters edit mode', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<ul id="todo-list"></ul>';
+    localStorage.clear();
+  });
+
+  it('clicking the todo title replaces it with an input pre-filled with the current title', () => {
+    saveTodos([{ id: 'abc', title: 'Buy milk', completed: false }]);
+    renderTodos();
+
+    const span = document.querySelector('#todo-list .todo-title');
+    span.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const input = document.querySelector('#todo-list .edit-input');
+    expect(input).not.toBeNull();
+    expect(input.tagName).toBe('INPUT');
+    expect(input.value).toBe('Buy milk');
+
+    const remainingSpan = document.querySelector('#todo-list .todo-title');
+    expect(remainingSpan).toBeNull();
   });
 });
