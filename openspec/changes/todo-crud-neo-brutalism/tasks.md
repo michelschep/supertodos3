@@ -25,8 +25,8 @@
 
 ## 4. Update Todo (todo-update)
 
-- [ ] 4.1 Test: Clicking a todo's checkbox toggles its `completed` state in LocalStorage and re-renders
-- [ ] 4.2 Implement: Add `toggleTodo(id)` and bind to checkbox `change` event in `renderTodos()`
+- [x] 4.1 Test: Clicking a todo's checkbox toggles its `completed` state in LocalStorage and re-renders
+- [x] 4.2 Implement: Add `toggleTodo(id)` and bind to checkbox `change` event in `renderTodos()`
 - [ ] 4.3 Test: Clicking a todo title replaces it with an `<input>` pre-filled with the current title (edit mode)
 - [ ] 4.4 Implement: Add `enterEditMode(id, element)` function that swaps the title span for an editable input
 - [ ] 4.5 Test: Pressing Enter while editing saves the new title to LocalStorage and reverts to text display

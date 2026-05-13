@@ -7,6 +7,16 @@ export function saveTodos(todos) {
   localStorage.setItem('todos', JSON.stringify(todos));
 }
 
+export function toggleTodo(id) {
+  const todos = loadTodos();
+  const todo = todos.find(t => t.id === id);
+  if (todo) {
+    todo.completed = !todo.completed;
+    saveTodos(todos);
+    renderTodos();
+  }
+}
+
 export function addTodo(title) {
   const todos = loadTodos();
   todos.push({ id: crypto.randomUUID(), title, completed: false });
@@ -55,6 +65,7 @@ export function renderTodos() {
     checkbox.type = 'checkbox';
     checkbox.checked = todo.completed;
     checkbox.dataset.id = todo.id;
+    checkbox.addEventListener('change', () => toggleTodo(todo.id));
 
     const span = document.createElement('span');
     span.className = todo.completed ? 'todo-title completed' : 'todo-title';
