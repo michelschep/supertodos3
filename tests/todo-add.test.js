@@ -33,3 +33,57 @@ describe('todo-add: form submit with non-empty title', () => {
     expect(items[0].textContent).toContain('Buy milk');
   });
 });
+
+describe('todo-add: form submit with empty/whitespace title', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <form id="add-form">
+        <input type="text" id="todo-input" autocomplete="off" />
+        <button type="submit">Add</button>
+      </form>
+      <ul id="todo-list"></ul>
+    `;
+    localStorage.clear();
+    initApp();
+  });
+
+  it('does NOT create a todo when title is empty', () => {
+    const input = document.getElementById('todo-input');
+    const form = document.getElementById('add-form');
+
+    input.value = '';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    expect(loadTodos().length).toBe(0);
+  });
+
+  it('does NOT create a todo when title is whitespace only', () => {
+    const input = document.getElementById('todo-input');
+    const form = document.getElementById('add-form');
+
+    input.value = '   ';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    expect(loadTodos().length).toBe(0);
+  });
+
+  it('adds .input-error class to the input when title is empty', () => {
+    const input = document.getElementById('todo-input');
+    const form = document.getElementById('add-form');
+
+    input.value = '';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    expect(input.classList.contains('input-error')).toBe(true);
+  });
+
+  it('adds .input-error class to the input when title is whitespace only', () => {
+    const input = document.getElementById('todo-input');
+    const form = document.getElementById('add-form');
+
+    input.value = '   ';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    expect(input.classList.contains('input-error')).toBe(true);
+  });
+});

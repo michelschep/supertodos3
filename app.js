@@ -21,7 +21,11 @@ export function initApp() {
       e.preventDefault();
       const input = document.getElementById('todo-input');
       const title = input.value.trim();
-      if (!title) return;
+      if (!title) {
+        input.classList.add('input-error');
+        return;
+      }
+      input.classList.remove('input-error');
       addTodo(title);
     });
   }

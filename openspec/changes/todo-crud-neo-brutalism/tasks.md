@@ -18,8 +18,8 @@
 
 - [x] 3.1 Test: Submitting the add-form with a non-empty title appends a new todo to LocalStorage and re-renders the list
 - [x] 3.2 Implement: Add `addTodo(title)` function and wire it to the form's `submit` event
-- [ ] 3.3 Test: Submitting with an empty/whitespace title does NOT create a todo and adds a red-border error class to the input
-- [ ] 3.4 Implement: Add validation guard in the submit handler; toggle `.input-error` class on empty input
+- [x] 3.3 Test: Submitting with an empty/whitespace title does NOT create a todo and adds a red-border error class to the input
+- [x] 3.4 Implement: Add validation guard in the submit handler; toggle `.input-error` class on empty input
 - [ ] 3.5 Test: After a successful add the input is cleared and focused
 - [ ] 3.6 Implement: Clear and re-focus the input field after `addTodo()` succeeds
 
