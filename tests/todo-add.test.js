@@ -34,6 +34,40 @@ describe('todo-add: form submit with non-empty title', () => {
   });
 });
 
+describe('todo-add: input cleared and focused after successful add', () => {
+  beforeEach(() => {
+    document.body.innerHTML = `
+      <form id="add-form">
+        <input type="text" id="todo-input" autocomplete="off" />
+        <button type="submit">Add</button>
+      </form>
+      <ul id="todo-list"></ul>
+    `;
+    localStorage.clear();
+    initApp();
+  });
+
+  it('clears the input after a successful add', () => {
+    const input = document.getElementById('todo-input');
+    const form = document.getElementById('add-form');
+
+    input.value = 'Buy milk';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    expect(input.value).toBe('');
+  });
+
+  it('focuses the input after a successful add', () => {
+    const input = document.getElementById('todo-input');
+    const form = document.getElementById('add-form');
+
+    input.value = 'Buy milk';
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+
+    expect(document.activeElement).toBe(input);
+  });
+});
+
 describe('todo-add: form submit with empty/whitespace title', () => {
   beforeEach(() => {
     document.body.innerHTML = `

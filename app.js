@@ -27,6 +27,8 @@ export function initApp() {
       }
       input.classList.remove('input-error');
       addTodo(title);
+      input.value = '';
+      input.focus();
     });
   }
   renderTodos();
