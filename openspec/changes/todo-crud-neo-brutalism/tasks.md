@@ -38,7 +38,7 @@
 
 ## 5. Delete Todo (todo-delete)
 
-- [ ] 5.1 Test: Clicking the delete button on a todo removes it from LocalStorage and re-renders the list
-- [ ] 5.2 Implement: Add `deleteTodo(id)` and bind to a delete `<button>` rendered per todo in `renderTodos()`
-- [ ] 5.3 Test: Deleting the last todo shows the empty-state message
-- [ ] 5.4 Implement: Verify empty-state triggers correctly via the shared `renderTodos()` empty-state branch (no extra code needed — covered by task 2.4)
+- [x] 5.1 Test: Clicking the delete button on a todo removes it from LocalStorage and re-renders the list
+- [x] 5.2 Implement: Add `deleteTodo(id)` and bind to a delete `<button>` rendered per todo in `renderTodos()`
+- [x] 5.3 Test: Deleting the last todo shows the empty-state message
+- [x] 5.4 Implement: Verify empty-state triggers correctly via the shared `renderTodos()` empty-state branch (no extra code needed — covered by task 2.4)

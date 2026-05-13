@@ -55,6 +55,12 @@ export function toggleTodo(id) {
   }
 }
 
+export function deleteTodo(id) {
+  const todos = loadTodos().filter(t => t.id !== id);
+  saveTodos(todos);
+  renderTodos();
+}
+
 export function addTodo(title) {
   const todos = loadTodos();
   todos.push({ id: crypto.randomUUID(), title, completed: false });
@@ -110,8 +116,14 @@ export function renderTodos() {
     span.textContent = todo.title;
     span.addEventListener('click', () => enterEditMode(todo.id, span));
 
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+
     li.appendChild(checkbox);
     li.appendChild(span);
+    li.appendChild(deleteBtn);
     list.appendChild(li);
   });
 }
