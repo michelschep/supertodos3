@@ -5,8 +5,8 @@
 
 ## 2. CSS — Status Box Styling
 
-- [ ] 2.1 Test: status box heeft neo-brutalism stijl en is zichtbaar wanneer klasse `status-box--visible` aanwezig is
-- [ ] 2.2 Implement: voeg `.status-box` (verborgen, `display: none`) en `.status-box--visible` (zichtbaar, rood, dik border, offset shadow) toe aan `style.css`
+- [x] 2.1 Test: status box heeft neo-brutalism stijl en is zichtbaar wanneer klasse `status-box--visible` aanwezig is
+- [x] 2.2 Implement: voeg `.status-box` (verborgen, `display: none`) en `.status-box--visible` (zichtbaar, rood, dik border, offset shadow) toe aan `style.css`
 
 ## 3. JS — `showError` en `clearError` functies
 
