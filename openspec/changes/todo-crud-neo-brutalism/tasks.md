@@ -2,13 +2,13 @@
 
 - [x] 1.1 Test: `index.html` loads without console errors and renders the app shell (header + add-form + list container)
 - [x] 1.2 Implement: Create `index.html` with Neo Brutalism app shell — header, add-form section, `<ul id="todo-list">` container
-- [ ] 1.3 Test: `style.css` applies Neo Brutalism base styles — `--black`, `--white`, `--yellow` CSS variables, `.brutal-card` utility class with thick border and offset drop shadow
-- [ ] 1.4 Implement: Create `style.css` with Neo Brutalism design tokens and `.brutal-card` utility
+- [x] 1.3 Test: `style.css` applies Neo Brutalism base styles — `--black`, `--white`, `--yellow` CSS variables, `.brutal-card` utility class with thick border and offset drop shadow
+- [x] 1.4 Implement: Create `style.css` with Neo Brutalism design tokens and `.brutal-card` utility
 
 ## 2. Todo List (todo-list)
 
-- [ ] 2.1 Test: `renderTodos()` renders all todos from LocalStorage into `#todo-list` as `<li>` elements with title and checkbox
-- [ ] 2.2 Implement: Create `app.js` with `loadTodos()` / `saveTodos()` LocalStorage helpers and `renderTodos()` function
+- [x] 2.1 Test: `renderTodos()` renders all todos from LocalStorage into `#todo-list` as `<li>` elements with title and checkbox
+- [x] 2.2 Implement: Create `app.js` with `loadTodos()` / `saveTodos()` LocalStorage helpers and `renderTodos()` function
 - [ ] 2.3 Test: `renderTodos()` shows the empty-state message "No todos yet — add one above!" when the todos array is empty
 - [ ] 2.4 Implement: Add empty-state branch inside `renderTodos()`
 - [ ] 2.5 Test: A todo with `completed: true` renders its title with a strikethrough CSS class

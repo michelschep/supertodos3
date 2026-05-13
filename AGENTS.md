@@ -36,4 +36,4 @@ Open browser console (F12) — no errors = ready to commit.
 ## Operational Learnings
 
 <!-- Format: "- [YYYY-MM-DD] <what you learned>" -->
-- [2026-05-13] This project uses Vitest + jsdom for unit/DOM tests (package.json, `npm test`). The HTML scaffold test reads index.html via `readFileSync` and parses it with JSDOM.
+- [2026-05-13] Vitest `environment: jsdom` set globally in `vitest.config.js` breaks existing tests that use `new URL()` with `import.meta.url` (file-URL based reads). Use `// @vitest-environment jsdom` per-file docblock instead, and keep the default env as `node`.
