@@ -162,11 +162,12 @@ function Test-BrowserStartup {
     }
 
     $port = 13579
-    Write-Host "  ⚙️  Starting serve on :$port — opening browser (5s)..." -ForegroundColor Gray
+    Write-Host "  ⚙️  Starting serve on :$port — opening browser (3s)..." -ForegroundColor Gray
 
+    # Do NOT redirect stdout/stderr — unread buffers cause the server to hang
     $psi = [System.Diagnostics.ProcessStartInfo]::new("cmd.exe", "/c npx serve . --listen $port --no-clipboard")
-    $psi.UseShellExecute = $false; $psi.CreateNoWindow = $true
-    $psi.RedirectStandardOutput = $true; $psi.RedirectStandardError = $true
+    $psi.UseShellExecute = $false
+    $psi.CreateNoWindow  = $true
     $psi.WorkingDirectory = $pwDir
     $serverProc = [System.Diagnostics.Process]::Start($psi)
     Start-Sleep -Seconds 3
@@ -192,8 +193,6 @@ if (errors.length > 0) { process.stderr.write(errors.join('\n') + '\n'); process
     Pop-Location
 
     try { $serverProc.Kill($true) } catch { try { $serverProc.Kill() } catch {} }
-    $serverProc.StandardOutput.ReadToEnd() | Out-Null
-    $serverProc.StandardError.ReadToEnd()  | Out-Null
 
     if ($exitCode -ne 0) {
         return @{
