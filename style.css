@@ -1,0 +1,132 @@
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --yellow: #f5e642;
+  --font: 'Arial Black', Arial, sans-serif;
+  --border: 3px solid var(--black);
+  --shadow: 4px 4px 0 var(--black);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+header {
+  background-color: var(--yellow);
+  border: var(--border);
+  box-shadow: var(--shadow);
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.brutal-card {
+  border: 3px solid var(--black);
+  box-shadow: 4px 4px 0 var(--black);
+  background-color: var(--white);
+  padding: 1rem;
+}
+
+.add-section form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+#todo-input {
+  flex: 1;
+  border: var(--border);
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+}
+
+#todo-input:focus {
+  box-shadow: var(--shadow);
+}
+
+#todo-input.input-error {
+  border-color: #cc0000;
+  box-shadow: 4px 4px 0 #cc0000;
+}
+
+button {
+  border: var(--border);
+  background-color: var(--yellow);
+  color: var(--black);
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+
+button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--black);
+}
+
+#todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#todo-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: var(--border);
+  box-shadow: var(--shadow);
+  background-color: var(--white);
+  padding: 0.75rem 1rem;
+}
+
+.todo-title {
+  flex: 1;
+  cursor: pointer;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.delete-btn {
+  background-color: var(--white);
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+}
