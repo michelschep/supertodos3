@@ -30,7 +30,7 @@ export function renderTodos() {
     checkbox.dataset.id = todo.id;
 
     const span = document.createElement('span');
-    span.className = 'todo-title';
+    span.className = todo.completed ? 'todo-title completed' : 'todo-title';
     span.textContent = todo.title;
 
     li.appendChild(checkbox);

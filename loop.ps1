@@ -110,7 +110,9 @@ function Invoke-JsTests {
 
     foreach ($pkg in $pkgFiles) {
         $content = Get-Content $pkg.FullName -Raw | ConvertFrom-Json -ErrorAction SilentlyContinue
-        if (-not $content?.scripts?.test) { continue }
+        $testScript = $null
+        try { $testScript = $content.scripts.test } catch {}
+        if (-not $testScript) { continue }
         $anyFound = $true
         $dir = Split-Path $pkg.FullName
         Write-Host "  ⚙️  npm test in $dir" -ForegroundColor DarkGray

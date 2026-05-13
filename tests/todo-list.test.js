@@ -45,6 +45,19 @@ describe('todo-list: renderTodos()', () => {
     expect(checkboxes[1].checked).toBe(false);
   });
 
+  it('renders completed todo title with .completed CSS class', () => {
+    saveTodos([
+      { id: '1', title: 'Done task', completed: true },
+      { id: '2', title: 'Pending task', completed: false },
+    ]);
+
+    renderTodos();
+
+    const spans = document.querySelectorAll('#todo-list .todo-title');
+    expect(spans[0].classList.contains('completed')).toBe(true);
+    expect(spans[1].classList.contains('completed')).toBe(false);
+  });
+
   it('shows empty-state message when todos array is empty', () => {
     renderTodos();
 
