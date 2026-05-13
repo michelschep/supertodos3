@@ -7,6 +7,27 @@ export function saveTodos(todos) {
   localStorage.setItem('todos', JSON.stringify(todos));
 }
 
+export function addTodo(title) {
+  const todos = loadTodos();
+  todos.push({ id: crypto.randomUUID(), title, completed: false });
+  saveTodos(todos);
+  renderTodos();
+}
+
+export function initApp() {
+  const form = document.getElementById('add-form');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('todo-input');
+      const title = input.value.trim();
+      if (!title) return;
+      addTodo(title);
+    });
+  }
+  renderTodos();
+}
+
 export function renderTodos() {
   const list = document.getElementById('todo-list');
   const todos = loadTodos();
@@ -42,6 +63,6 @@ export function renderTodos() {
 // Auto-initialize in browser (skipped when module is imported in test environments)
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('todo-list')) renderTodos();
+    if (document.getElementById('todo-list')) initApp();
   });
 }
