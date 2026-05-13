@@ -147,6 +147,64 @@ function Invoke-JsTests {
     }
 }
 
+function Test-BrowserStartup {
+    # Only for JS projects — skip when a .sln is present
+    $sln = Get-ChildItem -Filter "*.sln" -Recurse -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -notmatch "\\bin\\" } | Select-Object -First 1
+    if ($sln) { return @{ Skipped = $true; Reason = ".NET project" } }
+
+    $pkg = Get-ChildItem -Filter "package.json" -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (-not $pkg) { return @{ Skipped = $true; Reason = "no package.json" } }
+
+    $pwDir = Split-Path $pkg.FullName
+    if (-not (Test-Path (Join-Path $pwDir "node_modules\playwright"))) {
+        return @{ Skipped = $true; Reason = "playwright not installed (run: npm i -D playwright && npx playwright install chromium)" }
+    }
+
+    $port = 13579
+    Write-Host "  ⚙️  Starting serve on :$port — opening browser (5s)..." -ForegroundColor Gray
+
+    $psi = [System.Diagnostics.ProcessStartInfo]::new("cmd.exe", "/c npx serve . --listen $port --no-clipboard")
+    $psi.UseShellExecute = $false; $psi.CreateNoWindow = $true
+    $psi.RedirectStandardOutput = $true; $psi.RedirectStandardError = $true
+    $psi.WorkingDirectory = $pwDir
+    $serverProc = [System.Diagnostics.Process]::Start($psi)
+    Start-Sleep -Seconds 3
+
+    $script = @"
+import { chromium } from 'playwright';
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage();
+const errors = [];
+page.on('console', msg => { if (msg.type() === 'error') errors.push('[console.error] ' + msg.text()); });
+page.on('pageerror', err => errors.push('[uncaught] ' + err.message));
+try {
+  await page.goto('http://localhost:$port', { waitUntil: 'domcontentloaded', timeout: 10000 });
+  await page.waitForTimeout(2000);
+} catch (e) { errors.push('[navigation] ' + e.message); }
+await browser.close();
+if (errors.length > 0) { process.stderr.write(errors.join('\n') + '\n'); process.exit(1); }
+"@
+
+    Push-Location $pwDir
+    $result = $script | node --input-type=module 2>&1
+    $exitCode = $LASTEXITCODE
+    Pop-Location
+
+    try { $serverProc.Kill($true) } catch { try { $serverProc.Kill() } catch {} }
+    $serverProc.StandardOutput.ReadToEnd() | Out-Null
+    $serverProc.StandardError.ReadToEnd()  | Out-Null
+
+    if ($exitCode -ne 0) {
+        return @{
+            Skipped    = $false
+            Success    = $false
+            ErrorLines = ($result | Where-Object { $_ } | ForEach-Object { $_.ToString() }) -join "`n"
+        }
+    }
+    return @{ Skipped = $false; Success = $true }
+}
+
 function Test-AppStartup {
     $proj = Get-ChildItem -Filter "*.AppHost.csproj" -Recurse -ErrorAction SilentlyContinue |
         Where-Object { $_.FullName -notmatch "\\bin\\" } | Select-Object -First 1
@@ -302,6 +360,18 @@ while ($true) {
             Write-Host "     $($startupResult.ErrorLines)" -ForegroundColor Yellow
             $checksOk = $false
             $failureDetails += "App startup errors in $($startupResult.Project):`n$($startupResult.ErrorLines)`n`n"
+        }
+
+        $browserResult = Test-BrowserStartup
+        if ($browserResult.Skipped) {
+            Write-Host "  ⏭️  Browser    : skipped ($($browserResult.Reason))" -ForegroundColor Gray
+        } elseif ($browserResult.Success) {
+            Write-Host "  ✅ Browser    : no JS errors" -ForegroundColor Green
+        } else {
+            Write-Host "  ❌ Browser    : JS errors detected" -ForegroundColor Red
+            Write-Host "     $($browserResult.ErrorLines)" -ForegroundColor Yellow
+            $checksOk = $false
+            $failureDetails += "Browser JS errors:`n$($browserResult.ErrorLines)`n`n"
         }
 
         $attempt++
