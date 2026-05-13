@@ -17,8 +17,8 @@
 
 ## 4. JS — Validatie integratie in submit-handler
 
-- [ ] 4.1 Test: lege submit toont status box met tekst "Voer een titel in" en voegt `input-error` toe aan het invoerveld
-- [ ] 4.2 Implement: pas de submit-handler in `initApp` aan om `showError("Voer een titel in")` aan te roepen bij lege titel
+- [x] 4.1 Test: lege submit toont status box met tekst "Voer een titel in" en voegt `input-error` toe aan het invoerveld
+- [x] 4.2 Implement: pas de submit-handler in `initApp` aan om `showError("Voer een titel in")` aan te roepen bij lege titel
 - [ ] 4.3 Test: succesvolle submit verbergt de status box
 - [ ] 4.4 Implement: roep `clearError()` aan bij succesvolle submit in `initApp`
 

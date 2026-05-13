@@ -91,6 +91,7 @@ export function initApp() {
       const title = input.value.trim();
       if (!title) {
         input.classList.add('input-error');
+        showError('Voer een titel in');
         return;
       }
       input.classList.remove('input-error');
