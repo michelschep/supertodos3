@@ -18,7 +18,8 @@ See `openspec/specs/conventions.md` for full conventions.
 ## Build & Test
 
 ```bash
-npx serve .    # start local server at http://localhost:3000
+npm test          # run Vitest (unit/DOM tests via jsdom)
+npx serve .       # start local server at http://localhost:3000
 ```
 
 Open browser console (F12) — no errors = ready to commit.
@@ -35,3 +36,4 @@ Open browser console (F12) — no errors = ready to commit.
 ## Operational Learnings
 
 <!-- Format: "- [YYYY-MM-DD] <what you learned>" -->
+- [2026-05-13] This project uses Vitest + jsdom for unit/DOM tests (package.json, `npm test`). The HTML scaffold test reads index.html via `readFileSync` and parses it with JSDOM.
