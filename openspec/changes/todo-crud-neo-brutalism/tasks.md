@@ -9,8 +9,8 @@
 
 - [x] 2.1 Test: `renderTodos()` renders all todos from LocalStorage into `#todo-list` as `<li>` elements with title and checkbox
 - [x] 2.2 Implement: Create `app.js` with `loadTodos()` / `saveTodos()` LocalStorage helpers and `renderTodos()` function
-- [ ] 2.3 Test: `renderTodos()` shows the empty-state message "No todos yet — add one above!" when the todos array is empty
-- [ ] 2.4 Implement: Add empty-state branch inside `renderTodos()`
+- [x] 2.3 Test: `renderTodos()` shows the empty-state message "No todos yet — add one above!" when the todos array is empty
+- [x] 2.4 Implement: Add empty-state branch inside `renderTodos()`
 - [ ] 2.5 Test: A todo with `completed: true` renders its title with a strikethrough CSS class
 - [ ] 2.6 Implement: Apply `.completed` CSS class (strikethrough) to completed todo titles in `renderTodos()`
 

@@ -44,6 +44,14 @@ describe('todo-list: renderTodos()', () => {
     expect(checkboxes[0].checked).toBe(true);
     expect(checkboxes[1].checked).toBe(false);
   });
+
+  it('shows empty-state message when todos array is empty', () => {
+    renderTodos();
+
+    const list = document.getElementById('todo-list');
+    expect(list.textContent).toContain('No todos yet — add one above!');
+    expect(list.querySelectorAll('li').length).toBe(0);
+  });
 });
 
 describe('todo-list: loadTodos / saveTodos', () => {

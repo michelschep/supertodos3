@@ -12,6 +12,14 @@ export function renderTodos() {
   const todos = loadTodos();
   list.innerHTML = '';
 
+  if (todos.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'empty-state';
+    empty.textContent = 'No todos yet — add one above!';
+    list.appendChild(empty);
+    return;
+  }
+
   todos.forEach(todo => {
     const li = document.createElement('li');
     li.className = 'brutal-card todo-item';
